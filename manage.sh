@@ -44,6 +44,9 @@ case $ACTION in
             if [[ $M_CHOICE -ge 1 && $M_CHOICE -le ${#MODELS[@]} ]]; then
                 MODEL=${MODELS[$((M_CHOICE-1))]}
 
+                read -p "Введіть розмір контексту (num_ctx) [Enter для 16384]: " NUM_CTX_INPUT
+                NUM_CTX=${NUM_CTX_INPUT:-16384}
+
                 echo "♻️  Очищення старих контейнерів для уникнення конфлікту імен..."
                 docker rm -f ollama open-webui 2>/dev/null
 
@@ -58,8 +61,8 @@ case $ACTION in
                 echo "⏳ Очікування ініціалізації (5 сек)..."
                 sleep 5
                 
-                echo "📦 Перевірка моделі $MODEL та налаштування контексту..."
-                docker exec -it ollama ollama run $MODEL "/set parameter num_ctx 16384"
+                echo "📦 Перевірка моделі $MODEL та налаштування контексту (num_ctx = $NUM_CTX)..."
+                docker exec -it ollama ollama run $MODEL "/set parameter num_ctx $NUM_CTX"
                 docker exec -it ollama ollama run $MODEL ""
                 
                 echo "✅ Всі сервіси запущені успішно!"
