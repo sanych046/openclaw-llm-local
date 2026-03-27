@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Перевірка наявності та створення директорії ollama_data
+if [ ! -d "ollama_data" ]; then
+    echo "📁 Створення директорії ollama_data..."
+    mkdir -p ollama_data
+fi
+
 # Список доступних моделей
 MODELS=(
     "llama3.1:8b"
