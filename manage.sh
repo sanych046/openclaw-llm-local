@@ -23,7 +23,18 @@ case $ACTION in
             mkdir -p ollama_data
         fi
 
-        MODELS=("llama3.1:8b" "qwen2.5-coder:7b" "deepseek-coder-v2:16b" "gemma2:9b" "mistral:7b" "phi3.5:latest")
+        # Розширений список моделей: базові, для програмування, розпізнавання зображень та роботи з документами.
+        MODELS=(
+            "llama3.1:8b" 
+            "qwen2.5-coder:7b" 
+            "deepseek-coder-v2:16b" 
+            "gemma2:9b" 
+            "mistral:7b" 
+            "phi3.5:latest" 
+            "llava:8b" 
+            "minicpm-v:latest" 
+            "nomic-embed-text:latest"
+        )
 
         echo "--------------------------------------"
         echo "    🤖 МЕНЮ ЗАПУСКУ СТЕКУ             "
@@ -44,8 +55,7 @@ case $ACTION in
             if [[ $M_CHOICE -ge 1 && $M_CHOICE -le ${#MODELS[@]} ]]; then
                 MODEL=${MODELS[$((M_CHOICE-1))]}
 
-                read -p "Введіть розмір контексту (num_ctx) [Enter для 16384]: " NUM_CTX_INPUT
-                NUM_CTX=${NUM_CTX_INPUT:-16384}
+                read -p "Введіть розмір контексту (num_ctx) [Enter для значення за замовчуванням]: " NUM_CTX_INPUT
 
                 echo "♻️  Очищення старих контейнерів для уникнення конфлікту імен..."
                 docker rm -f ollama open-webui 2>/dev/null
@@ -61,8 +71,12 @@ case $ACTION in
                 echo "⏳ Очікування ініціалізації (5 сек)..."
                 sleep 5
                 
-                echo "📦 Перевірка моделі $MODEL та налаштування контексту (num_ctx = $NUM_CTX)..."
-                docker exec -it ollama ollama run $MODEL "/set parameter num_ctx $NUM_CTX"
+                if [[ -z "$NUM_CTX_INPUT" ]]; then
+                    echo "📦 Перевірка моделі $MODEL (із контекстом за замовчуванням)..."
+                else
+                    echo "📦 Перевірка моделі $MODEL та налаштування контексту (num_ctx = $NUM_CTX_INPUT)..."
+                    docker exec -it ollama ollama run $MODEL "/set parameter num_ctx $NUM_CTX_INPUT"
+                fi
                 docker exec -it ollama ollama run $MODEL ""
                 
                 echo "✅ Всі сервіси запущені успішно!"
