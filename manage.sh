@@ -31,7 +31,7 @@ case $ACTION in
             "gemma2:9b" 
             "mistral:7b" 
             "phi3.5:latest" 
-            "llava:8b" 
+            "llava:7b" 
             "minicpm-v:latest" 
             "nomic-embed-text:latest"
         )
