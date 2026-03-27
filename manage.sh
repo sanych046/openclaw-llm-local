@@ -44,6 +44,9 @@ case $ACTION in
             if [[ $M_CHOICE -ge 1 && $M_CHOICE -le ${#MODELS[@]} ]]; then
                 MODEL=${MODELS[$((M_CHOICE-1))]}
 
+                echo "♻️  Очищення старих контейнерів для уникнення конфлікту імен..."
+                docker rm -f ollama open-webui 2>/dev/null
+
                 if [[ $MODE -eq 1 ]]; then
                     echo "🚀 Запуск тільки Ollama..."
                     docker compose up -d ollama
