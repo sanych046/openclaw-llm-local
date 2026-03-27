@@ -74,6 +74,25 @@ case $ACTION in
             if [[ $M_CHOICE -ge 1 && $M_CHOICE -le ${#MODELS[@]} ]]; then
                 MODEL=${MODELS[$((M_CHOICE-1))]}
 
+                # Перевірка, чи вже запущений контейнер
+                if docker ps --format '{{.Names}}' | grep -q "^ollama$"; then
+                    echo ""
+                    echo "⚠️  УВАГА: Контейнер 'ollama' вже працює!"
+                    RUNNING_MODELS=$(docker exec ollama ollama ps 2>/dev/null | awk 'NR>1 {print $1}')
+                    if [ -n "$RUNNING_MODELS" ]; then
+                        MODELS_FMT=$(echo "$RUNNING_MODELS" | xargs | sed 's/ /, /g')
+                        echo "🧠 Зараз у пам'яті працює: $MODELS_FMT"
+                    fi
+                    echo ""
+                    echo "1) Зупинити попередній та запустити обраний новий ($MODEL)"
+                    echo "2) Нічого не робити (скасувати)"
+                    read -p "Оберіть варіант (1-2): " CONFLICT_ACT
+                    if [[ "$CONFLICT_ACT" != "1" ]]; then
+                        echo "🛑 Запуск скасовано."
+                        exit 0
+                    fi
+                fi
+
                 read -p "Введіть розмір контексту (num_ctx) [Enter для значення за замовчуванням]: " NUM_CTX_INPUT
 
                 echo "♻️  Очищення старих контейнерів для уникнення конфлікту імен..."
