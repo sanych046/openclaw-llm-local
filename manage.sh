@@ -16,10 +16,55 @@ read -p "Оберіть дію (1-8): " ACTION
 case $ACTION in
     1)
         echo "🔄 Перехід до меню запуску..."
-        if [ -x "./start-interactive.sh" ]; then
-            ./start-interactive.sh
+        
+        # Перевірка наявності та створення директорії ollama_data
+        if [ ! -d "ollama_data" ]; then
+            echo "📁 Створення директорії ollama_data..."
+            mkdir -p ollama_data
+        fi
+
+        MODELS=("llama3.1:8b" "qwen2.5-coder:7b" "deepseek-coder-v2:16b" "gemma2:9b" "mistral:7b" "phi3.5:latest")
+
+        echo "--------------------------------------"
+        echo "    🤖 МЕНЮ ЗАПУСКУ СТЕКУ             "
+        echo "--------------------------------------"
+        echo "1) Тільки Ollama (для VS Code / Агентів)"
+        echo "2) Ollama + Open WebUI (Повний інтерфейс)"
+        echo "3) Скасувати (Повернення)"
+        read -p "Оберіть режим запуску: " MODE
+
+        if [[ $MODE -eq 3 ]]; then 
+            echo "🛑 Запуск скасовано."
         else
-            bash ./start-interactive.sh
+            echo ""
+            echo "--- Оберіть модель для завантаження ---"
+            for i in "${!MODELS[@]}"; do echo "$((i+1))) ${MODELS[$i]}"; done
+            read -p "Введіть номер моделі: " M_CHOICE
+
+            if [[ $M_CHOICE -ge 1 && $M_CHOICE -le ${#MODELS[@]} ]]; then
+                MODEL=${MODELS[$((M_CHOICE-1))]}
+
+                if [[ $MODE -eq 1 ]]; then
+                    echo "🚀 Запуск тільки Ollama..."
+                    docker compose up -d ollama
+                else
+                    echo "🚀 Запуск повного стеку..."
+                    docker compose up -d
+                fi
+
+                echo "⏳ Очікування ініціалізації (5 сек)..."
+                sleep 5
+                
+                echo "📦 Перевірка моделі $MODEL та налаштування контексту..."
+                docker exec -it ollama ollama run $MODEL "/set parameter num_ctx 16384"
+                docker exec -it ollama ollama run $MODEL ""
+                
+                echo "✅ Всі сервіси запущені успішно!"
+                [[ $MODE -eq 2 ]] && echo "🔗 WebUI: http://localhost:3000"
+                echo "🔌 API для VS Code: http://localhost:11434"
+            else
+                echo "❌ Невірний вибір моделі."
+            fi
         fi
         ;;
     2)
