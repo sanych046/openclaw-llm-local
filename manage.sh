@@ -111,11 +111,29 @@ case $ACTION in
                 
                 if [[ -z "$NUM_CTX_INPUT" ]]; then
                     echo "📦 Перевірка моделі $MODEL (із контекстом за замовчуванням)..."
+                    docker exec -it ollama ollama run "$MODEL" ""
                 else
-                    echo "📦 Перевірка моделі $MODEL та налаштування контексту (num_ctx = $NUM_CTX_INPUT)..."
-                    docker exec -it ollama ollama run $MODEL "/set parameter num_ctx $NUM_CTX_INPUT"
+                    echo "📦 Створення кастомної моделі на базі $MODEL із контекстом (num_ctx = $NUM_CTX_INPUT)..."
+                    
+                    # Формуємо ім'я для нової моделі з тегом контексту
+                    if [[ "$MODEL" == *":"* ]]; then
+                        REPO="${MODEL%%:*}"
+                        TAG="${MODEL##*:}"
+                        NEW_MODEL="${REPO}:${TAG}-ctx${NUM_CTX_INPUT}"
+                    else
+                        NEW_MODEL="${MODEL}:ctx${NUM_CTX_INPUT}"
+                    fi
+
+                    # Спочатку завантажуємо базову модель (якщо її немає, create видасть помилку)
+                    docker exec -it ollama ollama pull "$MODEL"
+                    
+                    # Створюємо Modelfile і компілюємо нову модель
+                    docker exec -i ollama sh -c "echo \"FROM $MODEL\" > /tmp/Modelfile && echo \"PARAMETER num_ctx $NUM_CTX_INPUT\" >> /tmp/Modelfile && ollama create \"$NEW_MODEL\" -f /tmp/Modelfile"
+                    
+                    echo "📦 Запуск моделі $NEW_MODEL..."
+                    MODEL="$NEW_MODEL"
+                    docker exec -it ollama ollama run "$MODEL" ""
                 fi
-                docker exec -it ollama ollama run $MODEL ""
                 
                 echo "✅ Всі сервіси запущені успішно!"
                 [[ $MODE -eq 2 ]] && echo "🔗 WebUI: http://localhost:3000"
