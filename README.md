@@ -81,6 +81,8 @@ chmod +x *.sh
 | **Llama 3.1 8B** | Загальні питання / Агенти | ⭐ Класичний потужний універсальний помічник |
 | **Llama 3.2 3B** | Ультрашвидкі завдання | Надважка оптимізована швидкісна модель Meta |
 | **Gemma 2 9B** | Творчість / Чат | Висока якість мови та логіки (від Google) |
+| **Gemma 4 E4B** | 🆕 Ефективний чат | Новітня Edge модель, ідеальна для 8GB VRAM |
+| **Gemma 4 26B MoE** | 🆕 Потужна логіка | Просунута MoE модель (тільки Q4_K_M для 8GB VRAM) |
 | **Phi-3.5 Mini** | Швидкі відповіді | Microsoft модель, використовує мінімум VRAM |
 | **Llava 7B** | Розпізнавання зображень | 👁️ Базовий аналіз фотографій, складання описів |
 | **MiniCPM-V** | Деталізований Vision | 👁️ Неймовірна деталізація та OCR зображень |
@@ -88,6 +90,17 @@ chmod +x *.sh
 | **Nomic Embed Text** | Вбудовування (Embeddings) | 📑 Обов'язкова для пошуку по документам (RAG) |
 | **DeepSeek Coder 16B**| Складне кодування | Повільніша за Qwen 2.5 (частково в системній RAM) |
 | **Mistral 7B** | Альтернативний чат | Класична легка базова модель |
+
+### 📊 Gemma 4 VRAM Requirements Detail
+
+| Gemma 4 Variant | VRAM Needed (Q4_K_M) | 8GB Compatible? |
+| :--- | :--- | :--- |
+| **E2B** | ~1 GB + overhead | ✅ Yes, very comfortable |
+| **E4B** | ~2.4 GB + overhead | ✅ Yes, runs great |
+| **26B MoE A4B** | ~7 GB + overhead | ⚠️ Yes, but tight (Q4_K_M only) |
+| **31B Dense** | ~11 GB + overhead | ❌ No, needs 16GB+ |
+
+**Note:** Gemma 4 26B MoE uses only ~4B active parameters per token (Mixture of Experts), making it faster than dense models of similar size.
 
 ---
 
