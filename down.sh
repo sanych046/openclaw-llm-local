@@ -1,6 +1,4 @@
-cat << 'EOF' > down.sh
 #!/bin/bash
-echo "🧹 Повне видалення контейнерів та мережі..."
+echo "🧹 Complete removal of containers and network..."
 docker compose down
-echo "✅ Стек повністю прибрано. Дані (Volumes) збережено."
-EOF
+echo "✅ Stack completely removed. Data (Volumes) preserved."

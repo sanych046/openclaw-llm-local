@@ -1,4 +1,4 @@
 #!/bin/bash
-echo "💤 Зупинка контейнерів..."
+echo "💤 Stopping containers..."
 docker compose stop
-echo "✅ Сервіси зупинені. Ресурси GPU/RAM вільні."
+echo "✅ Services stopped. GPU/RAM resources are free."

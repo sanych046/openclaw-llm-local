@@ -1,30 +1,30 @@
 #!/bin/bash
 
 echo "======================================"
-echo "    ⚙️  КЕРУВАННЯ КОНТЕЙНЕРАМИ         "
+echo "    ⚙️  CONTAINER MANAGEMENT           "
 echo "======================================"
-echo "1) 🚀 Запустити AI стек (start-interactive)"
-echo "2) 📊 Перевірити статус (контейнери, моделі, об'єм даних)"
-echo "3) ⏸  Призупинити (Pause) - тимчасове звільнення CPU"
-echo "4) ▶  Відновити (Unpause) - відновлення роботи"
-echo "5) ⏹  Зупинити (Stop) - вивантаження з VRAM"
-echo "6) 🗑  Видалити контейнери (Down) - дані збережуться"
-echo "7) 💣 ПОВНЕ ВИДАЛЕННЯ (знищення контейнерів та ollama_data)"
-echo "8) 🛠  Опції (встановлення драйверів тощо)"
-echo "9) ❌ Вихід"
-read -p "Оберіть дію (1-9): " ACTION
+echo "1) 🚀 Start AI stack (start-interactive)"
+echo "2) 📊 Check status (containers, models, data volume)"
+echo "3) ⏸  Pause - temporarily free CPU"
+echo "4) ▶  Unpause - resume operation"
+echo "5) ⏹  Stop - offload from VRAM"
+echo "6) 🗑  Remove containers (Down) - data preserved"
+echo "7) 💣 FULL DELETION (destroy containers and ollama_data)"
+echo "8) 🛠  Options (install drivers, etc.)"
+echo "9) ❌ Exit"
+read -p "Select an action (1-9): " ACTION
 
 case $ACTION in
     1)
-        echo "🔄 Перехід до меню запуску..."
+        echo "🔄 Proceeding to launch menu..."
         
-        # Перевірка наявності та створення директорії ollama_data
+        # Check for and create ollama_data directory
         if [ ! -d "ollama_data" ]; then
-            echo "📁 Створення директорії ollama_data..."
+            echo "📁 Creating ollama_data directory..."
             mkdir -p ollama_data
         fi
 
-        # Розширений список моделей: базові, для програмування, розпізнавання зображень та роботи з документами.
+        # Expanded list of models: base, coding, vision, and documents
         MODELS=(
             "llama3.1:8b"
             "llama3.2:3b"
@@ -42,85 +42,85 @@ case $ACTION in
             "nomic-embed-text:latest"
         )
         DESCRIPTIONS=(
-            "[Загальні питання / Агенти] ⭐ Класичний універсальний помічник"
-            "[Надшвидке спілкування] Новітня легка (3B) оптимізована модель Meta"
-            "[Потужний логік] 🥇 Вважається кращою загальною моделлю у своєму класі"
-            "[Програмування (Код)] ⭐ Найкраща для роботи в агентах VS Code"
-            "[Складне кодування] Повільніша за Qwen (частково вивантажується в RAM)"
-            "[Творчість / Чат] Висока якість мови та логіки від Google"
-            "[Ефективний чат] 🆕 Gemma 4 Edge 4B - швидкий та легкий для 8GB VRAM"
-            "[Потужна логіка] 🆕 Gemma 4 26B MoE - просунута модель (тільки Q4_K_M для 8GB)"
-            "[Альтернативний чат] Класична популярна базова модель"
-            "[Швидкі відповіді] Працює надзвичайно швидко, мінімум ресурсів"
-            "[Розпізнавання зображень] 👁️ Базовий аналіз фотографій та схем"
-            "[Деталізований Vision] 👁️ Неймовірна деталізація та читання OCR"
-            "[Дуже легкий Vision] 👁️ Швидке читання фото з мінімальними затратами"
-            "[Вбудовування Embeddings] 📑 Обов'язкова для пошуку по документам (RAG)"
+            "[General / Agents] ⭐ Classic universal assistant"
+            "[Ultra-fast chat] Latest lightweight (3B) optimized Meta model"
+            "[Powerful logic] 🥇 Considered best general model in its class"
+            "[Programming (Code)] ⭐ Best for VS Code agents"
+            "[Complex coding] Slower than Qwen (partially offloads to RAM)"
+            "[Creativity / Chat] High language and logic quality from Google"
+            "[Efficient chat] 🆕 Gemma 4 Edge 4B - fast and light for 8GB VRAM"
+            "[Powerful logic] 🆕 Gemma 4 26B MoE - advanced model (Q4_K_M only for 8GB)"
+            "[Alternative chat] Classic popular base model"
+            "[Fast responses] Works extremely fast, minimum resources"
+            "[Image Recognition] 👁️ Basic photo and diagram analysis"
+            "[Detailed Vision] 👁️ Incredible detail and OCR reading"
+            "[Very light Vision] 👁️ Fast photo reading with minimal cost"
+            "[Embeddings] 📑 Essential for document search (RAG)"
         )
 
         echo "--------------------------------------"
-        echo "    🤖 МЕНЮ ЗАПУСКУ СТЕКУ             "
+        echo "    🤖 STACK LAUNCH MENU              "
         echo "--------------------------------------"
-        echo "1) Тільки Ollama (для VS Code / Агентів)"
-        echo "2) Ollama + Open WebUI (Повний інтерфейс)"
-        echo "3) Скасувати (Повернення)"
-        read -p "Оберіть режим запуску: " MODE
+        echo "1) Ollama Only (for VS Code / Agents)"
+        echo "2) Ollama + Open WebUI (Full Interface)"
+        echo "3) Cancel (Return)"
+        read -p "Select launch mode: " MODE
 
         if [[ $MODE -eq 3 ]]; then 
-            echo "🛑 Запуск скасовано."
+            echo "🛑 Launch cancelled."
         else
             echo ""
-            echo "--- Оберіть модель для завантаження ---"
+            echo "--- Select a model to load ---"
             for i in "${!MODELS[@]}"; do 
                 printf "%-3s %-25s | %s\n" "$((i+1)))" "${MODELS[$i]}" "${DESCRIPTIONS[$i]}"
             done
-            read -p "Введіть номер моделі: " M_CHOICE
+            read -p "Enter model number: " M_CHOICE
 
             if [[ $M_CHOICE -ge 1 && $M_CHOICE -le ${#MODELS[@]} ]]; then
                 MODEL=${MODELS[$((M_CHOICE-1))]}
 
-                # Перевірка, чи вже запущений контейнер
+                # Check if container is already running
                 if docker ps --format '{{.Names}}' | grep -q "^ollama$"; then
                     echo ""
-                    echo "⚠️  УВАГА: Контейнер 'ollama' вже працює!"
+                    echo "⚠️  WARNING: 'ollama' container is already running!"
                     RUNNING_MODELS=$(docker exec ollama ollama ps 2>/dev/null | awk 'NR>1 {print $1}')
                     if [ -n "$RUNNING_MODELS" ]; then
                         MODELS_FMT=$(echo "$RUNNING_MODELS" | xargs | sed 's/ /, /g')
-                        echo "🧠 Зараз у пам'яті працює: $MODELS_FMT"
+                        echo "🧠 Currently running in memory: $MODELS_FMT"
                     fi
                     echo ""
-                    echo "1) Зупинити попередній та запустити обраний новий ($MODEL)"
-                    echo "2) Нічого не робити (скасувати)"
-                    read -p "Оберіть варіант (1-2): " CONFLICT_ACT
+                    echo "1) Stop previous and launch selected new ($MODEL)"
+                    echo "2) Do nothing (cancel)"
+                    read -p "Select option (1-2): " CONFLICT_ACT
                     if [[ "$CONFLICT_ACT" != "1" ]]; then
-                        echo "🛑 Запуск скасовано."
+                        echo "🛑 Launch cancelled."
                         exit 0
                     fi
                 fi
 
-                read -p "Введіть розмір контексту (num_ctx) [Enter для значення за замовчуванням]: " NUM_CTX_INPUT
+                read -p "Enter context size (num_ctx) [Enter for default]: " NUM_CTX_INPUT
 
-                echo "♻️  Очищення старих контейнерів для уникнення конфлікту імен..."
+                echo "♻️  Cleaning up old containers to avoid name conflicts..."
                 docker rm -f ollama open-webui 2>/dev/null
 
                 if [[ $MODE -eq 1 ]]; then
-                    echo "🚀 Запуск тільки Ollama..."
+                    echo "🚀 Launching Ollama only..."
                     docker compose up -d ollama
                 else
-                    echo "🚀 Запуск повного стеку..."
+                    echo "🚀 Launching full stack..."
                     docker compose up -d
                 fi
 
-                echo "⏳ Очікування ініціалізації (5 сек)..."
+                echo "⏳ Waiting for initialization (5 sec)..."
                 sleep 5
                 
                 if [[ -z "$NUM_CTX_INPUT" ]]; then
-                    echo "📦 Перевірка моделі $MODEL (із контекстом за замовчуванням)..."
+                    echo "📦 Checking model $MODEL (with default context)..."
                     docker exec -it ollama ollama run "$MODEL" ""
                 else
-                    echo "📦 Створення кастомної моделі на базі $MODEL із контекстом (num_ctx = $NUM_CTX_INPUT)..."
+                    echo "📦 Creating custom model based on $MODEL with context (num_ctx = $NUM_CTX_INPUT)..."
                     
-                    # Формуємо ім'я для нової моделі з тегом контексту
+                    # Format name for new model with context tag
                     if [[ "$MODEL" == *":"* ]]; then
                         REPO="${MODEL%%:*}"
                         TAG="${MODEL##*:}"
@@ -129,104 +129,104 @@ case $ACTION in
                         NEW_MODEL="${MODEL}:ctx${NUM_CTX_INPUT}"
                     fi
 
-                    # Спочатку завантажуємо базову модель (якщо її немає, create видасть помилку)
+                    # First pull base model (if not present, create will fail)
                     docker exec -it ollama ollama pull "$MODEL"
                     
-                    # Створюємо Modelfile і компілюємо нову модель
+                    # Create Modelfile and compile new model
                     docker exec -i ollama sh -c "echo \"FROM $MODEL\" > /tmp/Modelfile && echo \"PARAMETER num_ctx $NUM_CTX_INPUT\" >> /tmp/Modelfile && ollama create \"$NEW_MODEL\" -f /tmp/Modelfile"
                     
-                    echo "📦 Запуск моделі $NEW_MODEL..."
+                    echo "📦 Launching model $NEW_MODEL..."
                     MODEL="$NEW_MODEL"
                     docker exec -it ollama ollama run "$MODEL" ""
                 fi
                 
-                echo "✅ Всі сервіси запущені успішно!"
+                echo "✅ All services launched successfully!"
                 [[ $MODE -eq 2 ]] && echo "🔗 WebUI: http://localhost:3000"
-                echo "🔌 API для VS Code: http://localhost:11434"
+                echo "🔌 API for VS Code: http://localhost:11434"
             else
-                echo "❌ Невірний вибір моделі."
+                echo "❌ Invalid model selection."
             fi
         fi
         ;;
     2)
-        echo "📊 Перевірка статусу системи..."
+        echo "📊 Checking system status..."
         echo "--------------------------------------"
-        echo "[Статус контейнерів]"
+        echo "[Container Status]"
         docker compose ps
         echo "--------------------------------------"
-        echo "[Дані та моделі]"
+        echo "[Data and Models]"
         if [ -d "ollama_data" ]; then
-            echo "✅ Робоча директорія 'ollama_data' існує."
+            echo "✅ Working directory 'ollama_data' exists."
             SIZE=$(du -sh ollama_data 2>/dev/null | cut -f1)
-            echo "📦 Об'єм збережених даних: $SIZE"
+            echo "📦 Volume of saved data: $SIZE"
             
-            # Перевірка, чи запущений ollama для виводу списку моделей
+            # Check if ollama is running to list models
             if docker ps --format '{{.Names}}' | grep -q "^ollama$"; then
-                echo "📋 Список завантажених моделей:"
+                echo "📋 List of downloaded models:"
                 docker exec ollama ollama list
             else
-                echo "⚠️  Контейнер 'ollama' зараз не запущений. Запустіть його, щоб побачити перелік моделей."
+                echo "⚠️  'ollama' container is currently not running. Start it to see the list of models."
             fi
         else
-            echo "❌ Директорію 'ollama_data' ще не створено (дані відсутні)."
+            echo "❌ Directory 'ollama_data' is not created yet (no data)."
         fi
         echo "--------------------------------------"
         ;;
     3)
-        echo "⏸ Призупинення контейнерів..."
+        echo "⏸ Pausing containers..."
         docker compose pause
-        echo "✅ Контейнери призупинено."
+        echo "✅ Containers paused."
         ;;
     4)
-        echo "▶ Відновлення контейнерів..."
+        echo "▶ Unpausing containers..."
         docker compose unpause
-        echo "✅ Контейнери відновлено."
+        echo "✅ Containers resumed."
         ;;
     5)
-        echo "⏹ Зупинка контейнерів..."
+        echo "⏹ Stopping containers..."
         docker compose stop
-        echo "✅ Контейнери зупинено. Відеопам'ять звільнено."
+        echo "✅ Containers stopped. Video memory freed."
         ;;
     6)
-        echo "🗑 Видалення контейнерів..."
+        echo "🗑 Removing containers..."
         docker compose down
-        echo "✅ Контейнери видалено. Дані в ollama_data збережено."
+        echo "✅ Containers removed. Data in ollama_data preserved."
         ;;
     7)
-        echo "⚠️  УВАГА: Ця дія повністю видалить всі контейнери, внутрішні томи Docker та робочу директорію ollama_data."
-        echo "Всі завантажені моделі та налаштування Open WebUI будуть втрачені!"
-        read -p "Ви СПРАВДІ хочете продовжити? (y/N): " CONFIRM
+        echo "⚠️  WARNING: This action will completely remove all containers, internal Docker volumes, and the ollama_data working directory."
+        echo "All downloaded models and Open WebUI settings will be lost!"
+        read -p "Are you SURE you want to continue? (y/N): " CONFIRM
         if [[ "$CONFIRM" == "y" || "$CONFIRM" == "Y" ]]; then
-            echo "💣 Видалення контейнерів та томів..."
+            echo "💣 Removing containers and volumes..."
             docker compose down -v
-            echo "🗑 Видалення робочої директорії ollama_data..."
+            echo "🗑 Removing ollama_data working directory..."
             rm -rf ollama_data
-            echo "✅ Повне очищення успішно завершено."
+            echo "✅ Complete cleanup finished successfully."
         else
-            echo "🛑 Дію скасовано. Ваші дані у безпеці."
+            echo "🛑 Action cancelled. Your data is safe."
         fi
         ;;
     8)
         echo "--------------------------------------"
-        echo "    🛠  ОПЦІЇ ТА НАЛАШТУВАННЯ         "
+        echo "    🛠  OPTIONS AND SETTINGS          "
         echo "--------------------------------------"
-        echo "1) 📥 Встановити драйвери NVIDIA та CUDA (для Ubuntu 26.04)"
-        echo "2) 🔙 Повернутися до головного меню"
-        read -p "Оберіть дію (1-2): " OPT_ACTION
+        echo "1) 📥 Install NVIDIA drivers and CUDA (for Ubuntu 26.04)"
+        echo "2) 🔙 Return to main menu"
+        read -p "Select action (1-2): " OPT_ACTION
         case $OPT_ACTION in
             1)
-                echo "🚀 Встановлення драйверів NVIDIA (серія 550) та CUDA Toolkit для Ubuntu 26.04..."
+                echo "🚀 Installing NVIDIA drivers (550 series) and CUDA Toolkit for Ubuntu 26.04..."
                 sudo apt update
                 sudo apt install -y ubuntu-drivers-common
                 sudo ubuntu-drivers autoinstall
                 sudo apt install -y nvidia-cuda-toolkit
-                echo "✅ Встановлення завершено. Для застосування змін рекомендується перезавантажити систему."
+                echo "✅ Installation complete. A system reboot is recommended to apply changes."
                 ;;
             2)
                 exec "$0"
                 ;;
             *)
-                echo "❌ Невірний вибір."
+                echo "❌ Invalid selection."
                 ;;
         esac
         ;;
@@ -234,6 +234,6 @@ case $ACTION in
         exit 0
         ;;
     *)
-        echo "❌ Невірний вибір. Спробуйте ще раз."
+        echo "❌ Invalid selection. Please try again."
         ;;
 esac

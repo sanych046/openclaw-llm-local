@@ -1,72 +1,72 @@
 # 🤖 Local AI Stack: Ollama + Open WebUI
 
-Цей проект дозволяє розгорнути персональне середовище штучного інтелекту на локальній машині за допомогою Docker. Стек оптимізований для роботи з відеокартами NVIDIA (тестовано на RTX 5060 8GB) та підтримує як локальні моделі, так і інтеграцію з хмарними API.
+This project allows you to deploy a personal AI environment on your local machine using Docker. The stack is optimized for NVIDIA GPUs (tested on RTX 5060 8GB) and supports both local models and integration with cloud APIs.
 
-## 🚀 Призначення
-* **Приватний чат:** Використання LLM без передачі даних у хмару.
-* **Агент для розробки:** Підключення локальних моделей до VS Code (через плагіни Kilo, Continue тощо).
-* **Мультимодальність:** Аналіз документів (PDF, Text) та робота з кодом.
-* **Гнучкість:** Швидке перемикання між Llama 3.1, Qwen 2.5 Coder, Gemma 2 та іншими.
+## 🚀 Purpose
+* **Private Chat:** Use LLMs without sending data to the cloud.
+* **Development Agent:** Connect local models to VS Code (via Kilo, Continue, etc.).
+* **Multimodality:** Document analysis (PDF, Text) and coding assistance.
+* **Flexibility:** Fast switching between Llama 3.1, Qwen 2.5 Coder, Gemma 2, and more.
 
 ---
 
-## 🛠 Попередня підготовка
+## 🛠 Prerequisites
 
-**Системні вимоги:** Проект оптимізовано та протестовано для роботи на **Ubuntu 26.04**.
+**System Requirements:** The project is optimized and tested for **Ubuntu 26.04**.
 
-1.  **Драйвери NVIDIA:** Переконайтеся, що встановлено актуальні драйвери (версія 550+). Для автоматичного встановлення драйверів та CUDA в Ubuntu 26.04 ви можете скористатися меню "Опції" у скрипті `manage.sh`.
-2.  **Docker & Docker Compose:** Мають бути встановлені у вашій системі.
-3.  **NVIDIA Container Toolkit:** Необхідний для прокидання GPU в Docker.
+1.  **NVIDIA Drivers:** Ensure up-to-date drivers are installed (version 550+). For automatic installation of drivers and CUDA in Ubuntu 26.04, you can use the "Options" menu in the `manage.sh` script.
+2.  **Docker & Docker Compose:** Must be installed on your system.
+3.  **NVIDIA Container Toolkit:** Required for passing through the GPU to Docker.
 
     ```bash
-    # Перевірка встановлення
+    # Verify installation
     nvidia-smi
     docker run --rm --gpus all nvidia/cuda:12.4.1-base-ubuntu26.04 nvidia-smi
     ```
 
 ---
 
-## 📂 Структура проекту
-* `docker-compose.yml` — опис сервісів та налаштування GPU.
-* `stop.sh` — швидка зупинка з вивантаженням з VRAM.
-* `down.sh` — повне видалення контейнерів.
-* `manage.sh` — основний інтерактивний скрипт для запуску стеку та повного керування контейнерами.
-* `ollama_data/` — місце зберігання завантажених моделей (Docker Volume).
+## 📂 Project Structure
+* `docker-compose.yml` — Service descriptions and GPU configuration.
+* `stop.sh` — Quick stop with VRAM offloading.
+* `down.sh` — Complete removal of containers.
+* `manage.sh` — Main interactive script for launching the stack and fully managing containers.
+* `ollama_data/` — Storage location for downloaded models (Docker Volume).
 
 ---
 
-## 🕹 Запуск та використання
+## 🕹 Usage
 
-### 1. Ініціалізація скриптів
-Перед першим запуском зробіть скрипти виконуваними:
+### 1. Initialize Scripts
+Before the first run, make the scripts executable:
 
 ```bash
 chmod +x *.sh
 ```
 
-### 2. Запуск стеку
-Запустіть головне інтерактивне меню:
+### 2. Launch Stack
+Start the main interactive menu:
 
 ```bash
 ./manage.sh
 ```
-Оберіть **пункт 1 (Запуск AI стеку)**. Після цього вам буде запропоновано:
-- **Режим роботи:** Тільки Ollama (для VS Code) або повністю з Open WebUI.
-- **Модель AI:** Вибір зі списку з їх описом.
-- **Розмір контексту (num_ctx).**
+Choose **option 1 (Start AI stack)**. You will then be prompted for:
+- **Operating Mode:** Ollama only (for VS Code) or full mode with Open WebUI.
+- **AI Model:** Select from the list with descriptions.
+- **Context Size (num_ctx).**
 
-### 3. Доступ до інтерфейсів
-* **Web-інтерфейс:** [http://localhost:3000](http://localhost:3000)
+### 3. Access Interfaces
+* **Web Interface:** [http://localhost:3000](http://localhost:3000)
 * **Ollama API:** [http://localhost:11434](http://localhost:11434)
 
-### 4. Керування контейнерами
-Для ефективного керування станом контейнерів використовуйте універсальний інтерактивний скрипт `manage.sh`. Він пропонує зручне меню дій:
-- **Призупинити (Pause)** або **Відновити (Unpause)** роботу контейнерів для тимчасового звільнення ресурсів ПК.
-- **Зупинити (Stop)** контейнери.
-- **Видалити (Down)** контейнери (дані моделей та налаштувань зберігаються).
-- **Повне видалення** зі знищенням всіх даних, контейнерів та робочих файлів (видалення `ollama_data`). Ця дія захищена додатковим підтвердженням від користувача.
+### 4. Container Management
+Use the universal interactive script `manage.sh` for effective container management. It provides a convenient action menu:
+- **Pause** or **Unpause** containers to temporarily free PC resources.
+- **Stop** containers.
+- **Remove (Down)** containers (model data and settings are preserved).
+- **Full Deletion** destroying all data, containers, and working files (deletes `ollama_data`). This action requires additional user confirmation.
 
-Запуск меню керування:
+Launch management menu:
 
 ```bash
 ./manage.sh
@@ -74,24 +74,24 @@ chmod +x *.sh
 
 ---
 
-## 💻 Моделі та сумісність (для 8GB VRAM)
+## 💻 Models and Compatibility (for 8GB VRAM)
 
-| Модель | Призначення | Рекомендація |
+| Model | Purpose | Recommendation |
 | :--- | :--- | :--- |
-| **Qwen 2.5 7B** | Базова Універсальна | 🥇 Наразі найкраща універсальна у цьому класі |
-| **Qwen 2.5 Coder 7B** | Програмування (Код) | ⭐ Найкраща для роботи в агентах VS Code |
-| **Llama 3.1 8B** | Загальні питання / Агенти | ⭐ Класичний потужний універсальний помічник |
-| **Llama 3.2 3B** | Ультрашвидкі завдання | Надважка оптимізована швидкісна модель Meta |
-| **Gemma 2 9B** | Творчість / Чат | Висока якість мови та логіки (від Google) |
-| **Gemma 4 E4B** | 🆕 Ефективний чат | Новітня Edge модель, ідеальна для 8GB VRAM |
-| **Gemma 4 26B MoE** | 🆕 Потужна логіка | Просунута MoE модель (тільки Q4_K_M для 8GB VRAM) |
-| **Phi-3.5 Mini** | Швидкі відповіді | Microsoft модель, використовує мінімум VRAM |
-| **Llava 7B** | Розпізнавання зображень | 👁️ Базовий аналіз фотографій, складання описів |
-| **MiniCPM-V** | Деталізований Vision | 👁️ Неймовірна деталізація та OCR зображень |
-| **Moondream 2** | Дуже легкий Vision | 👁️ Швидке читання фото з мінімальними затратами VRAM |
-| **Nomic Embed Text** | Вбудовування (Embeddings) | 📑 Обов'язкова для пошуку по документам (RAG) |
-| **DeepSeek Coder 16B**| Складне кодування | Повільніша за Qwen 2.5 (частково в системній RAM) |
-| **Mistral 7B** | Альтернативний чат | Класична легка базова модель |
+| **Qwen 2.5 7B** | Basic Universal | 🥇 Currently the best universal model in this class |
+| **Qwen 2.5 Coder 7B** | Programming (Code) | ⭐ Best for VS Code agents |
+| **Llama 3.1 8B** | General Questions / Agents | ⭐ Classic powerful universal assistant |
+| **Llama 3.2 3B** | Ultra-fast Tasks | Extremely optimized lightweight Meta model |
+| **Gemma 2 9B** | Creativity / Chat | High language and logic quality (from Google) |
+| **Gemma 4 E4B** | 🆕 Efficient Chat | Latest Edge model, perfect for 8GB VRAM |
+| **Gemma 4 26B MoE** | 🆕 Powerful Logic | Advanced MoE model (Q4_K_M only for 8GB VRAM) |
+| **Phi-3.5 Mini** | Fast Responses | Microsoft model, uses minimal VRAM |
+| **Llava 7B** | Image Recognition | 👁️ Basic photo analysis, descriptions |
+| **MiniCPM-V** | Detailed Vision | 👁️ Incredible detail and OCR for images |
+| **Moondream 2** | Very Light Vision | 👁️ Fast photo reading with minimal VRAM cost |
+| **Nomic Embed Text** | Embeddings | 📑 Essential for document search (RAG) |
+| **DeepSeek Coder 16B**| Complex Coding | Slower than Qwen 2.5 (partially in system RAM) |
+| **Mistral 7B** | Alternative Chat | Classic lightweight base model |
 
 ### 📊 Gemma 4 VRAM Requirements Detail
 
@@ -106,20 +106,20 @@ chmod +x *.sh
 
 ---
 
-## 🔧 Налаштування для VS Code (Kilo/Continue)
-Для підключення локального агента використовуйте наступні дані:
+## 🔧 Setup for VS Code (Kilo/Continue)
+To connect a local agent, use the following details:
 - **Provider:** Ollama
 - **Server URL:** `http://localhost:11434`
-- **Model:** Назва обраної моделі (напр. `qwen2.5-coder:7b`)
+- **Model:** Name of the selected model (e.g. `qwen2.5-coder:7b`)
 
-*Примітка: У конфігурації активовано `OLLAMA_ORIGINS=*`, що дозволяє розширенням звертатися до API без блокувань.*
+*Note: The configuration has `OLLAMA_ORIGINS=*` enabled, which allows extensions to access the API without being blocked.*
 
 ---
 
-## 📝 Коментарі по експлуатації
-1.  **Перший запуск:** Перший користувач, зареєстрований в Open WebUI, стає адміністратором.
-2.  **Споживання ресурсів:** Перед запуском важких ігор рекомендується виконувати `./stop.sh`, щоб звільнити відеопам'ять.
-3.  **Оновлення:** Щоб оновити сервіси до останніх версій:
+## 📝 Operating Notes
+1.  **First Launch:** The first user registered in Open WebUI becomes the administrator.
+2.  **Resource Consumption:** Before launching heavy games, it's recommended to run `./stop.sh` to free video memory.
+3.  **Updates:** To update services to their latest versions:
 
     ```bash
     docker compose pull
@@ -127,4 +127,4 @@ chmod +x *.sh
     ```
 
 ---
-**Створено для роботи на RTX 5060.** Приємного користування!
+**Built for RTX 5060.** Enjoy!
