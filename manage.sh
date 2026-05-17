@@ -10,8 +10,9 @@ echo "4) ▶  Відновити (Unpause) - відновлення роботи
 echo "5) ⏹  Зупинити (Stop) - вивантаження з VRAM"
 echo "6) 🗑  Видалити контейнери (Down) - дані збережуться"
 echo "7) 💣 ПОВНЕ ВИДАЛЕННЯ (знищення контейнерів та ollama_data)"
-echo "8) ❌ Вихід"
-read -p "Оберіть дію (1-8): " ACTION
+echo "8) 🛠  Опції (встановлення драйверів тощо)"
+echo "9) ❌ Вихід"
+read -p "Оберіть дію (1-9): " ACTION
 
 case $ACTION in
     1)
@@ -206,6 +207,30 @@ case $ACTION in
         fi
         ;;
     8)
+        echo "--------------------------------------"
+        echo "    🛠  ОПЦІЇ ТА НАЛАШТУВАННЯ         "
+        echo "--------------------------------------"
+        echo "1) 📥 Встановити драйвери NVIDIA та CUDA (для Ubuntu 26.04)"
+        echo "2) 🔙 Повернутися до головного меню"
+        read -p "Оберіть дію (1-2): " OPT_ACTION
+        case $OPT_ACTION in
+            1)
+                echo "🚀 Встановлення драйверів NVIDIA (серія 550) та CUDA Toolkit для Ubuntu 26.04..."
+                sudo apt update
+                sudo apt install -y ubuntu-drivers-common
+                sudo ubuntu-drivers autoinstall
+                sudo apt install -y nvidia-cuda-toolkit
+                echo "✅ Встановлення завершено. Для застосування змін рекомендується перезавантажити систему."
+                ;;
+            2)
+                exec "$0"
+                ;;
+            *)
+                echo "❌ Невірний вибір."
+                ;;
+        esac
+        ;;
+    9)
         exit 0
         ;;
     *)
