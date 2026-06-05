@@ -84,6 +84,7 @@ Launch management menu:
 | **Llama 3.2 3B** | Ultra-fast Tasks | Extremely optimized lightweight Meta model |
 | **Gemma 2 9B** | Creativity / Chat | High language and logic quality (from Google) |
 | **Gemma 4 E4B** | 🆕 Efficient Chat | Latest Edge model, perfect for 8GB VRAM |
+| **Gemma 4 12B** | 🆕 Balanced Chat | Balanced and capable mid-size model |
 | **Gemma 4 26B MoE** | 🆕 Powerful Logic | Advanced MoE model (Q4_K_M only for 8GB VRAM) |
 | **Phi-3.5 Mini** | Fast Responses | Microsoft model, uses minimal VRAM |
 | **Llava 7B** | Image Recognition | 👁️ Basic photo analysis, descriptions |
@@ -99,6 +100,7 @@ Launch management menu:
 | :--- | :--- | :--- |
 | **E2B** | ~1 GB + overhead | ✅ Yes, very comfortable |
 | **E4B** | ~2.4 GB + overhead | ✅ Yes, runs great |
+| **12B** | ~7.2 GB + overhead | ⚠️ Yes, but tight (Q4_K_M only) |
 | **26B MoE A4B** | ~7 GB + overhead | ⚠️ Yes, but tight (Q4_K_M only) |
 | **31B Dense** | ~11 GB + overhead | ❌ No, needs 16GB+ |
 
