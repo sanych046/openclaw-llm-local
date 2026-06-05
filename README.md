@@ -129,5 +129,18 @@ To connect a local agent, use the following details:
     ./manage.sh
     ```
 
+## ☁️ Cloud APIs Integration
+
+You can integrate powerful cloud models like **Google Gemini** and **Alibaba Qwen** directly into your local Open WebUI environment alongside your local models.
+
+To configure these keys safely:
+1. Run `./manage.sh`
+2. Select `8) 🛠  Options (install drivers, etc.)`
+3. Select `3) ☁️  Configure Cloud APIs (Gemini, Qwen)`
+4. Paste your API keys when prompted. They will be securely saved in a `.env` file and excluded from git commits.
+
+*(Note: Qwen is integrated using its DashScope OpenAI-compatible endpoint. Any keys provided will automatically be mapped to `OPENAI_API_BASE_URLS` and `OPENAI_API_KEYS` in your environment.)*
+
 ---
+
 **Built for RTX 5060.** Enjoy!

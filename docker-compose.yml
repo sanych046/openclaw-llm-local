@@ -26,6 +26,8 @@ services:
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
       - WEBUI_SECRET_KEY=super_secret_key_123
+    env_file:
+      - .env
     volumes:
       - open-webui-storage:/app/backend/data
     depends_on:

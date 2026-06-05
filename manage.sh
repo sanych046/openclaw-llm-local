@@ -66,12 +66,20 @@ case $ACTION in
         echo "    🤖 STACK LAUNCH MENU              "
         echo "--------------------------------------"
         echo "1) Ollama Only (for VS Code / Agents)"
-        echo "2) Ollama + Open WebUI (Full Interface)"
-        echo "3) Cancel (Return)"
+        echo "2) Ollama + Open WebUI (Full Interface + Local Model)"
+        echo "3) Open WebUI Only (Cloud Models Only, saves VRAM)"
+        echo "4) Cancel (Return)"
         read -p "Select launch mode: " MODE
 
-        if [[ $MODE -eq 3 ]]; then 
+        if [[ $MODE -eq 4 ]]; then 
             echo "🛑 Launch cancelled."
+        elif [[ $MODE -eq 3 ]]; then
+            echo "♻️  Cleaning up old containers..."
+            docker rm -f ollama open-webui 2>/dev/null
+            echo "🚀 Launching Open WebUI for Cloud Models..."
+            docker compose up -d
+            echo "✅ Services launched! Ollama is idle (no local models loaded)."
+            echo "🔗 WebUI: http://localhost:3000"
         else
             echo ""
             echo "--- Select a model to load ---"
@@ -216,8 +224,9 @@ case $ACTION in
         echo "--------------------------------------"
         echo "1) 📥 Install NVIDIA drivers and CUDA (for Ubuntu 26.04)"
         echo "2) 🔄 Update components (docker compose pull)"
-        echo "3) 🔙 Return to main menu"
-        read -p "Select action (1-3): " OPT_ACTION
+        echo "3) ☁️  Configure Cloud APIs (Gemini, Qwen)"
+        echo "4) 🔙 Return to main menu"
+        read -p "Select action (1-4): " OPT_ACTION
         case $OPT_ACTION in
             1)
                 echo "🚀 Installing NVIDIA drivers (550 series) and CUDA Toolkit for Ubuntu 26.04..."
@@ -233,6 +242,101 @@ case $ACTION in
                 echo "✅ Update complete. If containers are running, you may need to stop and start them to apply the updates."
                 ;;
             3)
+                while true; do
+                    echo "--------------------------------------"
+                    echo "    ☁️  CLOUD API CONFIGURATION      "
+                    echo "--------------------------------------"
+                    echo "1) 👁️  View Current Keys"
+                    echo "2) ➕  Add/Edit Gemini API Key"
+                    echo "3) ➕  Add/Edit Qwen (DashScope) API Key"
+                    echo "4) 🗑️  Remove Gemini API Key"
+                    echo "5) 🗑️  Remove Qwen (DashScope) API Key"
+                    echo "6) 🔙 Return to Options Menu"
+                    read -p "Select action (1-6): " API_ACTION
+                    
+                    touch .env
+                    
+                    case $API_ACTION in
+                        1)
+                            echo "--- Current Keys ---"
+                            if grep -q "^GEMINI_API_KEY=" .env; then
+                                KEY=$(grep "^GEMINI_API_KEY=" .env | cut -d '=' -f 2)
+                                if [ -n "$KEY" ]; then
+                                    MASKED="${KEY:0:5}***${KEY: -4}"
+                                    echo "Gemini: $MASKED"
+                                else
+                                    echo "Gemini: Not Set"
+                                fi
+                            else
+                                echo "Gemini: Not Set"
+                            fi
+                            
+                            if grep -q "^OPENAI_API_KEYS=" .env; then
+                                KEY=$(grep "^OPENAI_API_KEYS=" .env | cut -d '=' -f 2)
+                                if [ -n "$KEY" ]; then
+                                    MASKED="${KEY:0:5}***${KEY: -4}"
+                                    echo "Qwen (DashScope): $MASKED"
+                                else
+                                    echo "Qwen (DashScope): Not Set"
+                                fi
+                            else
+                                echo "Qwen (DashScope): Not Set"
+                            fi
+                            echo "--------------------"
+                            ;;
+                        2)
+                            read -p "Enter Gemini API Key: " GEMINI_KEY
+                            if [ -n "$GEMINI_KEY" ]; then
+                                if grep -q "^GEMINI_API_KEY=" .env; then
+                                    sed -i "s/^GEMINI_API_KEY=.*/GEMINI_API_KEY=$GEMINI_KEY/" .env
+                                else
+                                    echo "GEMINI_API_KEY=$GEMINI_KEY" >> .env
+                                fi
+                                echo "✅ Gemini API key updated."
+                            else
+                                echo "❌ Key cannot be empty. Use 'Remove' to delete a key."
+                            fi
+                            ;;
+                        3)
+                            read -p "Enter DashScope (Qwen) API Key: " QWEN_KEY
+                            if [ -n "$QWEN_KEY" ]; then
+                                if grep -q "^OPENAI_API_KEYS=" .env; then
+                                    sed -i "s/^OPENAI_API_KEYS=.*/OPENAI_API_KEYS=$QWEN_KEY/" .env
+                                else
+                                    echo "OPENAI_API_KEYS=$QWEN_KEY" >> .env
+                                fi
+                                
+                                if grep -q "^OPENAI_API_BASE_URLS=" .env; then
+                                    sed -i "s|^OPENAI_API_BASE_URLS=.*|OPENAI_API_BASE_URLS=https://dashscope-intl.aliyuncs.com/compatible-mode/v1|" .env
+                                else
+                                    echo "OPENAI_API_BASE_URLS=https://dashscope-intl.aliyuncs.com/compatible-mode/v1" >> .env
+                                fi
+                                echo "✅ Qwen (DashScope) API key updated."
+                            else
+                                echo "❌ Key cannot be empty. Use 'Remove' to delete a key."
+                            fi
+                            ;;
+                        4)
+                            sed -i '/^GEMINI_API_KEY=/d' .env
+                            echo "✅ Gemini API key removed."
+                            ;;
+                        5)
+                            sed -i '/^OPENAI_API_KEYS=/d' .env
+                            sed -i '/^OPENAI_API_BASE_URLS=/d' .env
+                            echo "✅ Qwen (DashScope) API key removed."
+                            ;;
+                        6)
+                            echo "🔙 Returning to Options Menu..."
+                            break
+                            ;;
+                        *)
+                            echo "❌ Invalid selection."
+                            ;;
+                    esac
+                    echo ""
+                done
+                ;;
+            4)
                 exec "$0"
                 ;;
             *)
