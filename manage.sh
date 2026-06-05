@@ -213,8 +213,9 @@ case $ACTION in
         echo "    🛠  OPTIONS AND SETTINGS          "
         echo "--------------------------------------"
         echo "1) 📥 Install NVIDIA drivers and CUDA (for Ubuntu 26.04)"
-        echo "2) 🔙 Return to main menu"
-        read -p "Select action (1-2): " OPT_ACTION
+        echo "2) 🔄 Update components (docker compose pull)"
+        echo "3) 🔙 Return to main menu"
+        read -p "Select action (1-3): " OPT_ACTION
         case $OPT_ACTION in
             1)
                 echo "🚀 Installing NVIDIA drivers (550 series) and CUDA Toolkit for Ubuntu 26.04..."
@@ -225,6 +226,11 @@ case $ACTION in
                 echo "✅ Installation complete. A system reboot is recommended to apply changes."
                 ;;
             2)
+                echo "🔄 Updating Docker images (Ollama & WebUI)..."
+                docker compose pull
+                echo "✅ Update complete. If containers are running, you may need to stop and start them to apply the updates."
+                ;;
+            3)
                 exec "$0"
                 ;;
             *)
