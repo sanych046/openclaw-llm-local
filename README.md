@@ -86,6 +86,7 @@ Launch management menu:
 | **Gemma 4 E4B** | 🆕 Efficient Chat | Latest Edge model, perfect for 8GB VRAM |
 | **Gemma 4 12B** | 🆕 Balanced Chat | Balanced and capable mid-size model |
 | **Gemma 4 26B MoE** | 🆕 Powerful Logic | Advanced MoE model (Q4_K_M only for 8GB VRAM) |
+| **MamayLM v2.0 12B**| 🆕 MamayLM | Powerful language model based on Gemma 3 |
 | **Phi-3.5 Mini** | Fast Responses | Microsoft model, uses minimal VRAM |
 | **Llava 7B** | Image Recognition | 👁️ Basic photo analysis, descriptions |
 | **MiniCPM-V** | Detailed Vision | 👁️ Incredible detail and OCR for images |
